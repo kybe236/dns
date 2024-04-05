@@ -34,9 +34,9 @@ impl Message {
     /// # Example
     /// 
     /// ```
-    /// use dns::Messages;
+    /// use dns::Message;
     /// 
-    /// let options = Messages::new();
+    /// let options = Message::new();
     /// ```
     pub fn new() -> Message {
         Message {
