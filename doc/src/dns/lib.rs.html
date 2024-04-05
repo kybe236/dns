@@ -199,6 +199,29 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
 <a href="#195" id="195">195</a>
 <a href="#196" id="196">196</a>
 <a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! DNS Client in Development
 //!
 //! # Goals
@@ -235,26 +258,6 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     qtype: u16,
     qclass: u16,
 }
-
-<span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>Question {
-    <span class="doccomment">/// a domain name represented as a sequence of labels, where
-    /// each label consists of a length octet followed by that
-    /// number of octets.  The domain name terminates with the
-    /// zero length octet for the null label of the root.  Note
-    /// that this field may be an odd number of octets; no
-    /// padding is used.
-    </span>qname: Vec&lt;u8&gt;,
-    <span class="doccomment">///  a two octet code which specifies the type of the query.
-    ///  The values for this field include all codes valid for a
-    ///  TYPE field, together with some more general codes which
-    ///  can match more than one type of RR.
-    </span>qtype: u16,
-    <span class="doccomment">/// a two octet code that specifies the class of the query.
-    /// For example, the QCLASS field is IN for the Internet.
-    </span>qclass: u16,
-}
-
 <span class="kw">impl </span>DnsOption {
     <span class="doccomment">/// # Creates a new DnsOption
     /// 
@@ -278,7 +281,31 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
             qclass: <span class="number">0</span>,
         }
     }
-    <span class="kw">pub fn </span>set_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: Vec&lt;String&gt;) {
+
+    <span class="doccomment">/// # Sets the domain name
+    /// 
+    /// # Arguments
+    /// 
+    /// takes a vector of strings as an argument.
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// use dns::DnsOption;
+    /// 
+    /// let mut options = DnsOption::new();
+    /// options.set_name(vec!["www.google.com".to_string()]);
+    /// ```
+    /// 
+    /// # Note
+    /// 
+    /// The domain name is represented as a sequence of labels, where
+    /// each label consists of a length octet followed by that
+    /// number of octets.  The domain name terminates with the
+    /// zero length octet for the null label of the root.  Note
+    /// that this field may be an odd number of octets; no
+    /// padding is used.
+    </span><span class="kw">pub fn </span>set_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: Vec&lt;String&gt;) {
         <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="macro">vec!</span>[];
         <span class="kw">for </span>label <span class="kw">in </span>name {
             <span class="kw">let </span>parts = label.split(<span class="string">"."</span>);
@@ -298,7 +325,7 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
             qclass: <span class="number">1</span>,
         });
     }
-
+    
     <span class="doccomment">/// # Sets the request flags
     ///
     /// # Arguments
@@ -382,6 +409,25 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     </span><span class="kw">pub fn </span>set_flags(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flags: u16) {
         <span class="self">self</span>.flags = flags;
     }
+}
+
+<span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>Question {
+    <span class="doccomment">/// a domain name represented as a sequence of labels, where
+    /// each label consists of a length octet followed by that
+    /// number of octets.  The domain name terminates with the
+    /// zero length octet for the null label of the root.  Note
+    /// that this field may be an odd number of octets; no
+    /// padding is used.
+    </span>qname: Vec&lt;u8&gt;,
+    <span class="doccomment">///  a two octet code which specifies the type of the query.
+    ///  The values for this field include all codes valid for a
+    ///  TYPE field, together with some more general codes which
+    ///  can match more than one type of RR.
+    </span>qtype: u16,
+    <span class="doccomment">/// a two octet code that specifies the class of the query.
+    /// For example, the QCLASS field is IN for the Internet.
+    </span>qclass: u16,
 }
 
 <span class="attr">#[cfg(test)]

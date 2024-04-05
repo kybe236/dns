@@ -1,0 +1,16 @@
+DnsOption {
+id: u16,
+flags: u16,
+question: Vec<Question>,
+qdcount: u16,
+ancount: u16,
+nscount: u16,
+arcount: u16,
+qtype: u16
+qtclass: u16,
+}
+Question {
+qname: Vec<u8>,
+qtype: u16,
+qclass: u16,
+}
