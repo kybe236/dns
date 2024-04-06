@@ -2,8 +2,17 @@
 //!
 //! # Goals
 //! Make an dns client that supports all dns options.
+//! 
+//! 
 
-use std::{error::Error, process::{self, exit}};
+mod dns_error;
+
+use dns_error::DnsError;
+
+use std::{
+    error::Error,
+    process::{self},
+};
 
 /// All communications inside of the domain protocol are carried in a single
 /// format called a message.  The top level format of message is divided
@@ -15,11 +24,11 @@ pub struct Message {
     /// specify which of the remaining sections are present, and also specify
     /// whether the message is a query or a response, a standard query or some
     /// other opcode, etc.
-    header: Header,
+    pub header: Header,
     /// The question section contains fields that describe a
     /// question to a name server.  These fields are a query type (QTYPE), a
     /// query class (QCLASS), and a query domain name (QNAME).
-    question: Vec<Question>,
+    pub question: Vec<Question>,
     /// The answer section contains RRs that answer the question.
     answer: Option<Vec<Resource>>,
     /// the authority section contains RRs that point toward an authoritative name server.
@@ -30,21 +39,69 @@ pub struct Message {
 }
 impl Message {
     /// # Creates a new DnsOption
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use dns::Message;
-    /// 
+    ///
     /// let options = Message::new();
     /// ```
     pub fn new() -> Message {
         Message {
             header: Header::new(),
-            question: vec![Question::new()],
+            question: vec![],
             answer: None,
             authority: None,
             additional: None,
+        }
+    }
+
+    /// # Sets the domain name
+    ///
+    /// # Arguments
+    ///
+    /// takes a vector of strings as an argument.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use dns::Message;
+    ///
+    /// let mut question = Message::new();
+    ///
+    /// question.set_questions(vec!["www.google.com".to_string()]);
+    /// ```
+    ///
+    /// # Note
+    ///
+    /// The domain name is represented as a sequence of labels, where
+    /// each label consists of a length octet followed by that
+    /// number of octets.  The domain name terminates with the
+    /// zero length octet for the null label of the root.  Note
+    /// that this field may be an odd number of octets; no
+    /// padding is used.
+    pub fn set_questions(&mut self, questions: Vec<String>) {
+        let mut res = vec![];
+        for label in questions {
+            let parts = label.split('.');
+            let mut new_parts = vec![];
+            for part in parts {
+                new_parts.push(part.len() as u8);
+                for c in part.chars() {
+                    new_parts.push(c as u8);
+                }
+            }
+            res.append(&mut new_parts);
+        }
+        res.push(0);
+        for _ in res.iter() {
+            self.header.qdcount += 1;
+            self.question.push(Question {
+                qname: res.clone(),
+                qtype: 0,
+                qclass: 0,
+            });
         }
     }
 
@@ -59,7 +116,7 @@ impl Message {
 
         let mut question = vec![];
         let mut i = 12;
-        for val in 0..header.qdcount {
+        for _ in 0..header.qdcount {
             let mut qname = vec![];
             while vec[i] != 0 {
                 qname.push(vec[i]);
@@ -175,7 +232,6 @@ impl Message {
             });
         }
 
-
         Message {
             header,
             question,
@@ -202,7 +258,7 @@ impl Message {
     }
 
     pub fn send(&self) -> Result<Message, Box<dyn Error>> {
-        let socket = std::net::UdpSocket::bind("127.0.0.1:12321").unwrap();
+        let socket = std::net::UdpSocket::bind("127.0.0.1:12321")?;
 
         let data = self.get_packet();
 
@@ -243,19 +299,19 @@ pub struct Header {
 }
 impl Header {
     /// # Creates a new DnsOption
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use dns::Header;
-    /// 
+    ///
     /// let options = Header::new();
     /// ```
-    /// 
+    ///
     /// # Note
-    /// 
+    ///
     /// This method creates a new DnsOption with the following default values:
-    /// 
+    ///
     /// - id: 0
     /// - flags: 0
     /// - question: Vec::new()
@@ -275,18 +331,18 @@ impl Header {
             arcount: 0,
         }
     }
-    
+
     /// # Sets the id
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// takes 1 u16 argument.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use dns::Header;
-    /// 
+    ///
     /// let mut options = Header::new();
     /// options.set_id(1234);
     /// ```
@@ -298,13 +354,13 @@ impl Header {
     /// # Arguments
     ///
     /// takes 1 u16 argument with the following format:
-    /// 
+    ///
     /// - 1 bit: QR (Query/Response)
-    /// 
+    ///
     ///    A one bit field that specifies whether this message is a query (0),
     ///    or a response (1).   
     /// <br />
-    /// 
+    ///
     /// - 4 bits: Opcode
     ///     A four bit field that specifies kind of query in this
     ///     message.  This value is set by the originator of a query
@@ -317,7 +373,7 @@ impl Header {
     ///     - `2`:               a server status request (STATUS)
     ///     
     ///     - `3-15`:            reserved for future use
-    /// 
+    ///
     /// DNS Header Flags
     /// [(source)](https://www.rfc-editor.org/rfc/rfc1035.html)
     ///
@@ -330,7 +386,7 @@ impl Header {
     ///     have multiple owner names because of aliases.   
     ///<br />
     /// - 1 bit: TC (Truncated)
-    /// 
+    ///
     ///     TrunCation - specifies that this message was truncated
     /// due to length greater than that permitted on the transmission
     /// channel.  
@@ -354,7 +410,7 @@ impl Header {
     ///     queries and responses.  
     ///<br />
     /// - 4 bits: RCODE (Response Code)
-    /// 
+    ///
     ///     Response code - this 4 bit field is set as part of responses.  The values have the following interpretation:
     ///
     ///     - `0`:       No error condition
@@ -373,33 +429,32 @@ impl Header {
     ///     - `5`:       Refused - The name server refuses to perform the specified operation for policy reasons.  For example, a name server may not wish to provide the information to the particular requester, or a name server may not wish to perform a particular operation (e.g., zone transfer) for particular data.
     ///
     ///     - `6-15`:    Reserved for future use.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use dns::Header;
-    /// 
+    ///
     /// let mut options = Header::new();
     /// options.set_flags(0b0000_0000_0000_0000);
     /// ```
-    pub fn set_flags(&mut self, flags: u16) {
+    pub fn set_flags(&mut self, flags: u16) -> Result<(), Box<dyn Error>> {
         let mut test = flags & 0b0_1111_000_0000_0000;
         test = test >> 11;
         if test > 2 {
-            eprintln!("Opcode should be 0-2");
-            process::exit(1);
+            return Err(Box::new(DnsError::InvalidOpcodeFlag(test as i32)));
         }
         test = flags & 0b0000_0000_0111_0000;
         test = test >> 4;
         if test != 0 {
-            eprintln!("Z is reserved and should be 0");
-            process::exit(1);
+            return Err(Box::new(DnsError::InvalidZFlag(test as i32)));
         }
         let test = flags & 0b0000_0000_0000_1111;
         if test > 5 {
-            eprintln!("RCODE should be 0-5")
+            return Err(Box::new(DnsError::InvalidRcodeFlag(test as i32)));
         }
         self.flags = flags;
+        Ok(())
     }
 }
 impl Default for Header {
@@ -422,19 +477,19 @@ pub struct Question {
     ///  The values for this field include all codes valid for a
     ///  TYPE field, together with some more general codes which
     ///  can match more than one type of RR.
-    qtype: u16,
+    pub qtype: u16,     // ! TODO add seter with checks
     /// a two octet code that specifies the class of the query.
     /// For example, the QCLASS field is IN for the Internet.
-    qclass: u16,
+    pub qclass: u16,    // ! TODO add seter with checks
 }
 impl Question {
     /// # Creates a new Question
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// use dns::Question;
-    /// 
+    ///
     /// let question = Question::new();
     /// ```
     pub fn new() -> Question {
@@ -443,47 +498,6 @@ impl Question {
             qtype: 0,
             qclass: 0,
         }
-    }
-
-    /// # Sets the domain name
-    /// 
-    /// # Arguments
-    /// 
-    /// takes a vector of strings as an argument.
-    /// 
-    /// # Example
-    /// 
-    /// ```
-    /// use dns::Question;
-    /// 
-    /// let mut question = Question::new();
-    /// 
-    /// question.set_questions(vec!["www.google.com".to_string()]);
-    /// ```
-    /// 
-    /// # Note
-    /// 
-    /// The domain name is represented as a sequence of labels, where
-    /// each label consists of a length octet followed by that
-    /// number of octets.  The domain name terminates with the
-    /// zero length octet for the null label of the root.  Note
-    /// that this field may be an odd number of octets; no
-    /// padding is used.
-    pub fn set_questions(&mut self, questions: Vec<String>) {
-        let mut res = vec![];
-        for label in questions {
-            let parts = label.split('.');
-            let mut new_parts = vec![];
-            for part in parts {
-                new_parts.push(part.len() as u8);
-                for c in part.chars() {
-                    new_parts.push(c as u8);
-                }
-            }
-            res.append(&mut new_parts);
-        }
-        res.push(0);
-        self.qname.extend_from_slice(&res);
     }
 }
 
@@ -516,16 +530,41 @@ pub struct Resource {
     /// the RDATA field is a 4 octet ARPA Internet address.
     rdata: Vec<u8>,
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_dns() {
-        let mut options = Question::new();
+    fn message_set_questions() {
+        let mut options = Message::new();
         options.set_questions(vec!["www.google.com".to_string()]);
         println!("{:#?}", options);
-        assert_eq!(options.qname, vec![3, 119, 119, 119, 6, 103, 111, 111, 103, 108, 101, 3, 99, 111, 109, 0])
+        assert_eq!(
+            options.question[0].qname,
+            vec![3, 119, 119, 119, 6, 103, 111, 111, 103, 108, 101, 3, 99, 111, 109, 0]
+        )
     }
+
+    #[test]
+    fn header_set_flags() {
+        let mut options = Header::new();
+        options.set_flags(0b0000_0000_0000_0000).unwrap();
+        assert_eq!(options.flags, 0b0000_0000_0000_0000);
+    }
+
+    #[test]
+    #[should_panic]
+    fn header_dosnt_allow_wrong_opcode() {
+        let mut options = Header::new();
+        options.set_flags(0b0111_1000_0000_0000).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn header_dosnt_allow_wrong_z() {
+        let mut options = Header::new();
+        options.set_flags(0b0000_0000_0000_1111).unwrap();
+    }
+
+    
 }

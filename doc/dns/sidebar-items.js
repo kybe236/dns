@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["dns"],"struct":["DnsOption","Question"]};
+window.SIDEBAR_ITEMS = {"mod":["dns_error"],"struct":["Header","Message","Question","Resource"]};

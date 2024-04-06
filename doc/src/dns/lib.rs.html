@@ -222,93 +222,443 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+<a href="#566" id="566">566</a>
+<a href="#567" id="567">567</a>
+<a href="#568" id="568">568</a>
+<a href="#569" id="569">569</a>
+<a href="#570" id="570">570</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! DNS Client in Development
 //!
 //! # Goals
 //! Make an dns client that supports all dns options.
+//! 
+//! 
 
-</span><span class="kw">pub fn </span>dns(options: DnsOption) {
-    <span class="macro">println!</span>(<span class="string">"DNS lookup for {:#?}"</span>, options);
-}
+</span><span class="kw">mod </span>dns_error;
 
-<span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>DnsOption {
-    <span class="doccomment">/// A 16 bit identifier assigned by the program that
-    /// generates any kind of query.
-    /// This identifier is copied the corresponding reply and can be used by the requester
-    /// to match up replies to outstanding queries.
-    </span>id: u16,
-    <span class="doccomment">/// See the [`DnsOption::set_flags()`] method for more information.
-    </span>flags: u16,
-    <span class="doccomment">/// See [`Question`] for more information.
-    </span>question: Vec&lt;Question&gt;,
-    <span class="doccomment">/// An unsigned 16 bit integer specifying the number of
-    /// entries in the question section.
-    </span>qdcount: u16,
-    <span class="doccomment">/// an unsigned 16 bit integer specifying the number of
-    /// resource records in the answer section.
-    </span>ancount: u16,
-    <span class="doccomment">/// an unsigned 16 bit integer specifying the number of name
-    /// server resource records in the authority records
-    /// section.
-    </span>nscount: u16,
-    <span class="doccomment">/// an unsigned 16 bit integer specifying the number of
-    /// resource records in the additional records section.
-    </span>arcount: u16,
-    qtype: u16,
-    qclass: u16,
+<span class="kw">use </span>dns_error::DnsError;
+
+<span class="kw">use </span>std::{
+    error::Error,
+    process::{<span class="self">self</span>},
+};
+
+<span class="doccomment">/// All communications inside of the domain protocol are carried in a single
+/// format called a message.  The top level format of message is divided
+/// into 5 sections (some of which are empty in certain cases) shown below:
+</span><span class="attr">#[allow(unused)]
+#[derive(Debug)]
+</span><span class="kw">pub struct </span>Message {
+    <span class="doccomment">/// The header section is always present.  The header includes fields that
+    /// specify which of the remaining sections are present, and also specify
+    /// whether the message is a query or a response, a standard query or some
+    /// other opcode, etc.
+    </span><span class="kw">pub </span>header: Header,
+    <span class="doccomment">/// The question section contains fields that describe a
+    /// question to a name server.  These fields are a query type (QTYPE), a
+    /// query class (QCLASS), and a query domain name (QNAME).
+    </span><span class="kw">pub </span>question: Vec&lt;Question&gt;,
+    <span class="doccomment">/// The answer section contains RRs that answer the question.
+    </span>answer: <span class="prelude-ty">Option</span>&lt;Vec&lt;Resource&gt;&gt;,
+    <span class="doccomment">/// the authority section contains RRs that point toward an authoritative name server.
+    </span>authority: <span class="prelude-ty">Option</span>&lt;Vec&lt;Resource&gt;&gt;,
+    <span class="doccomment">/// the additional records section contains RRs
+    /// which relate to the query, but are not strictly answers for the question.
+    </span>additional: <span class="prelude-ty">Option</span>&lt;Vec&lt;Resource&gt;&gt;,
 }
-<span class="kw">impl </span>DnsOption {
+<span class="kw">impl </span>Message {
     <span class="doccomment">/// # Creates a new DnsOption
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
-    /// use dns::DnsOption;
-    /// 
-    /// let options = DnsOption::new();
+    /// use dns::Message;
+    ///
+    /// let options = Message::new();
     /// ```
-    </span><span class="kw">pub fn </span>new() -&gt; DnsOption {
-        DnsOption {
-            id: <span class="number">0</span>,
-            flags: <span class="number">0</span>,
-            question: Vec::new(),
-            qdcount: <span class="number">0</span>,
-            ancount: <span class="number">0</span>,
-            nscount: <span class="number">0</span>,
-            arcount: <span class="number">0</span>,
-            qtype: <span class="number">0</span>,
-            qclass: <span class="number">0</span>,
+    </span><span class="kw">pub fn </span>new() -&gt; Message {
+        Message {
+            header: Header::new(),
+            question: <span class="macro">vec!</span>[],
+            answer: <span class="prelude-val">None</span>,
+            authority: <span class="prelude-val">None</span>,
+            additional: <span class="prelude-val">None</span>,
         }
     }
 
     <span class="doccomment">/// # Sets the domain name
-    /// 
+    ///
     /// # Arguments
-    /// 
+    ///
     /// takes a vector of strings as an argument.
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
-    /// use dns::DnsOption;
-    /// 
-    /// let mut options = DnsOption::new();
-    /// options.set_name(vec!["www.google.com".to_string()]);
+    /// use dns::Message;
+    ///
+    /// let mut question = Message::new();
+    ///
+    /// question.set_questions(vec!["www.google.com".to_string()]);
     /// ```
-    /// 
+    ///
     /// # Note
-    /// 
+    ///
     /// The domain name is represented as a sequence of labels, where
     /// each label consists of a length octet followed by that
     /// number of octets.  The domain name terminates with the
     /// zero length octet for the null label of the root.  Note
     /// that this field may be an odd number of octets; no
     /// padding is used.
-    </span><span class="kw">pub fn </span>set_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: Vec&lt;String&gt;) {
+    </span><span class="kw">pub fn </span>set_questions(<span class="kw-2">&amp;mut </span><span class="self">self</span>, questions: Vec&lt;String&gt;) {
         <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="macro">vec!</span>[];
-        <span class="kw">for </span>label <span class="kw">in </span>name {
-            <span class="kw">let </span>parts = label.split(<span class="string">"."</span>);
+        <span class="kw">for </span>label <span class="kw">in </span>questions {
+            <span class="kw">let </span>parts = label.split(<span class="string">'.'</span>);
             <span class="kw">let </span><span class="kw-2">mut </span>new_parts = <span class="macro">vec!</span>[];
             <span class="kw">for </span>part <span class="kw">in </span>parts {
                 new_parts.push(part.len() <span class="kw">as </span>u8);
@@ -319,25 +669,272 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
             res.append(<span class="kw-2">&amp;mut </span>new_parts);
         }
         res.push(<span class="number">0</span>);
-        <span class="self">self</span>.question.push(Question {
-            qname: res,
-            qtype: <span class="number">1</span>,
-            qclass: <span class="number">1</span>,
-        });
+        <span class="kw">for _ in </span>res.iter() {
+            <span class="self">self</span>.header.qdcount += <span class="number">1</span>;
+            <span class="self">self</span>.question.push(Question {
+                qname: res.clone(),
+                qtype: <span class="number">0</span>,
+                qclass: <span class="number">0</span>,
+            });
+        }
     }
-    
+
+    <span class="kw">pub fn </span>from(vec: Vec&lt;u8&gt;) -&gt; Message {
+        <span class="kw">let </span><span class="kw-2">mut </span>header = Header::new();
+        header.id = u16::from_be_bytes([vec[<span class="number">0</span>], vec[<span class="number">1</span>]]);
+        header.flags = u16::from_be_bytes([vec[<span class="number">2</span>], vec[<span class="number">3</span>]]);
+        header.qdcount = u16::from_be_bytes([vec[<span class="number">4</span>], vec[<span class="number">5</span>]]);
+        header.ancount = u16::from_be_bytes([vec[<span class="number">6</span>], vec[<span class="number">7</span>]]);
+        header.nscount = u16::from_be_bytes([vec[<span class="number">8</span>], vec[<span class="number">9</span>]]);
+        header.arcount = u16::from_be_bytes([vec[<span class="number">10</span>], vec[<span class="number">11</span>]]);
+
+        <span class="kw">let </span><span class="kw-2">mut </span>question = <span class="macro">vec!</span>[];
+        <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">12</span>;
+        <span class="kw">for _ in </span><span class="number">0</span>..header.qdcount {
+            <span class="kw">let </span><span class="kw-2">mut </span>qname = <span class="macro">vec!</span>[];
+            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
+                qname.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            qname.push(<span class="number">0</span>);
+            i += <span class="number">1</span>;
+            <span class="kw">let </span>qtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>qclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            question.push(Question {
+                qname,
+                qtype,
+                qclass,
+            });
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>answer = <span class="macro">vec!</span>[];
+
+        <span class="kw">for _ in </span><span class="number">0</span>..header.ancount {
+            <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
+            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
+                name.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            name.push(<span class="number">0</span>);
+            i += <span class="number">1</span>;
+            <span class="kw">let </span>rtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>rclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>ttl = u32::from_be_bytes([vec[i], vec[i + <span class="number">1</span>], vec[i + <span class="number">2</span>], vec[i + <span class="number">3</span>]]);
+            i += <span class="number">4</span>;
+            <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
+            <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
+                rdata.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            answer.push(Resource {
+                name,
+                rtype,
+                rclass,
+                ttl,
+                rdlength,
+                rdata,
+            });
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>authority = <span class="macro">vec!</span>[];
+        <span class="kw">for _ in </span><span class="number">0</span>..header.nscount {
+            <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
+            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
+                name.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            name.push(<span class="number">0</span>);
+            i += <span class="number">1</span>;
+            <span class="kw">let </span>rtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>rclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>ttl = u32::from_be_bytes([vec[i], vec[i + <span class="number">1</span>], vec[i + <span class="number">2</span>], vec[i + <span class="number">3</span>]]);
+            i += <span class="number">4</span>;
+            <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
+            <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
+                rdata.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            authority.push(Resource {
+                name,
+                rtype,
+                rclass,
+                ttl,
+                rdlength,
+                rdata,
+            });
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>additional = <span class="macro">vec!</span>[];
+        <span class="kw">for _ in </span><span class="number">0</span>..header.arcount {
+            <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
+            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
+                name.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            name.push(<span class="number">0</span>);
+            i += <span class="number">1</span>;
+            <span class="kw">let </span>rtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>rclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span>ttl = u32::from_be_bytes([vec[i], vec[i + <span class="number">1</span>], vec[i + <span class="number">2</span>], vec[i + <span class="number">3</span>]]);
+            i += <span class="number">4</span>;
+            <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            i += <span class="number">2</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
+            <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
+                rdata.push(vec[i]);
+                i += <span class="number">1</span>;
+            }
+            additional.push(Resource {
+                name,
+                rtype,
+                rclass,
+                ttl,
+                rdlength,
+                rdata,
+            });
+        }
+
+        Message {
+            header,
+            question,
+            answer: <span class="prelude-val">Some</span>(answer),
+            authority: <span class="prelude-val">Some</span>(authority),
+            additional: <span class="prelude-val">Some</span>(additional),
+        }
+    }
+
+    <span class="kw">pub fn </span>get_packet(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;u8&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="macro">vec!</span>[];
+        res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.id.to_be_bytes());
+        res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.flags.to_be_bytes());
+        res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.qdcount.to_be_bytes());
+        res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.ancount.to_be_bytes());
+        res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.nscount.to_be_bytes());
+        res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.arcount.to_be_bytes());
+        <span class="kw">for </span>question <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.question {
+            res.extend_from_slice(<span class="kw-2">&amp;</span>question.qname);
+            res.extend_from_slice(<span class="kw-2">&amp;</span>question.qtype.to_be_bytes());
+            res.extend_from_slice(<span class="kw-2">&amp;</span>question.qclass.to_be_bytes());
+        }
+        res
+    }
+
+    <span class="kw">pub fn </span>send(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Message, Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
+        <span class="kw">let </span>socket = std::net::UdpSocket::bind(<span class="string">"127.0.0.1:12321"</span>)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>data = <span class="self">self</span>.get_packet();
+
+        socket.send_to(<span class="kw-2">&amp;</span>data, <span class="string">"1.1.1.1"</span>)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">8192</span>];
+        <span class="kw">let </span>(amt, <span class="kw">_</span>) = socket.recv_from(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>res = Message::from(buf[..amt].to_vec());
+
+        <span class="prelude-val">Ok</span>(res)
+    }
+}
+
+<span class="attr">#[allow(unused)]
+#[derive(Debug)]
+</span><span class="kw">pub struct </span>Header {
+    <span class="doccomment">/// A 16 bit identifier assigned by the program that
+    /// generates any kind of query.
+    /// This identifier is copied the corresponding reply and can be used by the requester
+    /// to match up replies to outstanding queries.
+    </span><span class="kw">pub </span>id: u16,
+    <span class="doccomment">/// See the [`Header::set_flags()`] method for more information.
+    </span>flags: u16,
+    <span class="doccomment">/// An unsigned 16 bit integer specifying the number of
+    /// entries in the question section.
+    </span><span class="kw">pub </span>qdcount: u16,
+    <span class="doccomment">/// an unsigned 16 bit integer specifying the number of
+    /// resource records in the answer section.
+    </span><span class="kw">pub </span>ancount: u16,
+    <span class="doccomment">/// an unsigned 16 bit integer specifying the number of name
+    /// server resource records in the authority records
+    /// section.
+    </span><span class="kw">pub </span>nscount: u16,
+    <span class="doccomment">/// an unsigned 16 bit integer specifying the number of
+    /// resource records in the additional records section.
+    </span><span class="kw">pub </span>arcount: u16,
+}
+<span class="kw">impl </span>Header {
+    <span class="doccomment">/// # Creates a new DnsOption
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use dns::Header;
+    ///
+    /// let options = Header::new();
+    /// ```
+    ///
+    /// # Note
+    ///
+    /// This method creates a new DnsOption with the following default values:
+    ///
+    /// - id: 0
+    /// - flags: 0
+    /// - question: Vec::new()
+    /// - qdcount: 0
+    /// - ancount: 0
+    /// - nscount: 0
+    /// - arcount: 0
+    /// - qtype: 0
+    /// - qclass: 0
+    </span><span class="kw">pub fn </span>new() -&gt; Header {
+        Header {
+            id: <span class="number">0</span>,
+            flags: <span class="number">0</span>,
+            qdcount: <span class="number">0</span>,
+            ancount: <span class="number">0</span>,
+            nscount: <span class="number">0</span>,
+            arcount: <span class="number">0</span>,
+        }
+    }
+
+    <span class="doccomment">/// # Sets the id
+    ///
+    /// # Arguments
+    ///
+    /// takes 1 u16 argument.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use dns::Header;
+    ///
+    /// let mut options = Header::new();
+    /// options.set_id(1234);
+    /// ```
+    </span><span class="kw">pub fn </span>set_id(<span class="kw-2">&amp;mut </span><span class="self">self</span>, id: u16) {
+        <span class="self">self</span>.id = id;
+    }
     <span class="doccomment">/// # Sets the request flags
     ///
     /// # Arguments
     ///
     /// takes 1 u16 argument with the following format:
-    /// 
+    ///
     /// - 1 bit: QR (Query/Response)
-    /// 
+    ///
     ///    A one bit field that specifies whether this message is a query (0),
     ///    or a response (1).   
     /// &lt;br /&gt;
-    /// 
+    ///
     /// - 4 bits: Opcode
     ///     A four bit field that specifies kind of query in this
     ///     message.  This value is set by the originator of a query
@@ -350,7 +947,7 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     ///     - `2`:               a server status request (STATUS)
     ///     
     ///     - `3-15`:            reserved for future use
-    /// 
+    ///
     /// DNS Header Flags
     /// [(source)](https://www.rfc-editor.org/rfc/rfc1035.html)
     ///
@@ -363,7 +960,7 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     ///     have multiple owner names because of aliases.   
     ///&lt;br /&gt;
     /// - 1 bit: TC (Truncated)
-    /// 
+    ///
     ///     TrunCation - specifies that this message was truncated
     /// due to length greater than that permitted on the transmission
     /// channel.  
@@ -387,7 +984,7 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     ///     queries and responses.  
     ///&lt;br /&gt;
     /// - 4 bits: RCODE (Response Code)
-    /// 
+    ///
     ///     Response code - this 4 bit field is set as part of responses.  The values have the following interpretation:
     ///
     ///     - `0`:       No error condition
@@ -406,12 +1003,42 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     ///     - `5`:       Refused - The name server refuses to perform the specified operation for policy reasons.  For example, a name server may not wish to provide the information to the particular requester, or a name server may not wish to perform a particular operation (e.g., zone transfer) for particular data.
     ///
     ///     - `6-15`:    Reserved for future use.
-    </span><span class="kw">pub fn </span>set_flags(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flags: u16) {
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use dns::Header;
+    ///
+    /// let mut options = Header::new();
+    /// options.set_flags(0b0000_0000_0000_0000);
+    /// ```
+    </span><span class="kw">pub fn </span>set_flags(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flags: u16) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>test = flags &amp; <span class="number">0b0_1111_000_0000_0000</span>;
+        test = test &gt;&gt; <span class="number">11</span>;
+        <span class="kw">if </span>test &gt; <span class="number">2 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Box::new(DnsError::InvalidOpcodeFlag(test <span class="kw">as </span>i32)));
+        }
+        test = flags &amp; <span class="number">0b0000_0000_0111_0000</span>;
+        test = test &gt;&gt; <span class="number">4</span>;
+        <span class="kw">if </span>test != <span class="number">0 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Box::new(DnsError::InvalidZFlag(test <span class="kw">as </span>i32)));
+        }
+        <span class="kw">let </span>test = flags &amp; <span class="number">0b0000_0000_0000_1111</span>;
+        <span class="kw">if </span>test &gt; <span class="number">5 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Box::new(DnsError::InvalidRcodeFlag(test <span class="kw">as </span>i32)));
+        }
         <span class="self">self</span>.flags = flags;
+        <span class="prelude-val">Ok</span>(())
+    }
+}
+<span class="kw">impl </span>Default <span class="kw">for </span>Header {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Header::new()
     }
 }
 
-<span class="attr">#[derive(Debug)]
+<span class="attr">#[allow(unused)]
+#[derive(Debug)]
 </span><span class="kw">pub struct </span>Question {
     <span class="doccomment">/// a domain name represented as a sequence of labels, where
     /// each label consists of a length octet followed by that
@@ -424,21 +1051,95 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     ///  The values for this field include all codes valid for a
     ///  TYPE field, together with some more general codes which
     ///  can match more than one type of RR.
-    </span>qtype: u16,
-    <span class="doccomment">/// a two octet code that specifies the class of the query.
+    </span><span class="kw">pub </span>qtype: u16,     <span class="comment">// ! TODO add seter with checks
+    </span><span class="doccomment">/// a two octet code that specifies the class of the query.
     /// For example, the QCLASS field is IN for the Internet.
-    </span>qclass: u16,
+    </span><span class="kw">pub </span>qclass: u16,    <span class="comment">// ! TODO add seter with checks
+</span>}
+<span class="kw">impl </span>Question {
+    <span class="doccomment">/// # Creates a new Question
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use dns::Question;
+    ///
+    /// let question = Question::new();
+    /// ```
+    </span><span class="kw">pub fn </span>new() -&gt; Question {
+        Question {
+            qname: Vec::new(),
+            qtype: <span class="number">0</span>,
+            qclass: <span class="number">0</span>,
+        }
+    }
 }
 
+<span class="doccomment">/// The answer, authority, and additional sections all share the same
+/// format: a variable number of resource records, where the number of
+/// records is specified in the corresponding count field in the header.
+/// Each resource record has the following format:
+</span><span class="attr">#[allow(unused)]
+#[derive(Debug)]
+</span><span class="kw">pub struct </span>Resource {
+    <span class="doccomment">/// a domain name to which this resource record pertains.
+    </span>name: Vec&lt;u8&gt;,
+    <span class="doccomment">/// two octets containing one of the RR type codes.  This
+    /// field specifies the meaning of the data in the RDATA field.
+    </span>rtype: u16,
+    <span class="doccomment">/// two octets which specify the class of the data in the RDATA field.
+    </span>rclass: u16,
+    <span class="doccomment">/// a 32 bit unsigned integer that specifies the time
+    /// interval (in seconds) that the resource record may be
+    /// cached before it should be discarded.  Zero values are
+    /// interpreted to mean that the RR can only be used for the
+    /// transaction in progress, and should not be cached.
+    </span>ttl: u32,
+    <span class="doccomment">/// an unsigned 16 bit integer that specifies the length in octets of the RDATA field.
+    </span>rdlength: u16,
+    <span class="doccomment">/// a variable length string of octets that describes the
+    /// resource.  The format of this information varies
+    /// according to the TYPE and CLASS of the resource record.
+    /// For example, the if the TYPE is A and the CLASS is IN,
+    /// the RDATA field is a 4 octet ARPA Internet address.
+    </span>rdata: Vec&lt;u8&gt;,
+}
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_dns() {
-        <span class="kw">let </span><span class="kw-2">mut </span>options = DnsOption::new();
-        options.set_name(<span class="macro">vec!</span>[<span class="string">"www.google.com"</span>.to_string()]);
+    </span><span class="kw">fn </span>message_set_questions() {
+        <span class="kw">let </span><span class="kw-2">mut </span>options = Message::new();
+        options.set_questions(<span class="macro">vec!</span>[<span class="string">"www.google.com"</span>.to_string()]);
         <span class="macro">println!</span>(<span class="string">"{:#?}"</span>, options);
-        <span class="macro">assert_eq!</span>(options.question[<span class="number">0</span>].qname, <span class="macro">vec!</span>[<span class="number">3</span>, <span class="number">119</span>, <span class="number">119</span>, <span class="number">119</span>, <span class="number">6</span>, <span class="number">103</span>, <span class="number">111</span>, <span class="number">111</span>, <span class="number">103</span>, <span class="number">108</span>, <span class="number">101</span>, <span class="number">3</span>, <span class="number">99</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">0</span>])
+        <span class="macro">assert_eq!</span>(
+            options.question[<span class="number">0</span>].qname,
+            <span class="macro">vec!</span>[<span class="number">3</span>, <span class="number">119</span>, <span class="number">119</span>, <span class="number">119</span>, <span class="number">6</span>, <span class="number">103</span>, <span class="number">111</span>, <span class="number">111</span>, <span class="number">103</span>, <span class="number">108</span>, <span class="number">101</span>, <span class="number">3</span>, <span class="number">99</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">0</span>]
+        )
     }
-}</code></pre></div></section></main></body></html>
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>header_set_flags() {
+        <span class="kw">let </span><span class="kw-2">mut </span>options = Header::new();
+        options.set_flags(<span class="number">0b0000_0000_0000_0000</span>).unwrap();
+        <span class="macro">assert_eq!</span>(options.flags, <span class="number">0b0000_0000_0000_0000</span>);
+    }
+
+    <span class="attr">#[test]
+    #[should_panic]
+    </span><span class="kw">fn </span>header_dosnt_allow_wrong_opcode() {
+        <span class="kw">let </span><span class="kw-2">mut </span>options = Header::new();
+        options.set_flags(<span class="number">0b0111_1000_0000_0000</span>).unwrap();
+    }
+
+    <span class="attr">#[test]
+    #[should_panic]
+    </span><span class="kw">fn </span>header_dosnt_allow_wrong_z() {
+        <span class="kw">let </span><span class="kw-2">mut </span>options = Header::new();
+        options.set_flags(<span class="number">0b0000_0000_0000_1111</span>).unwrap();
+    }
+
+    
+}
+</code></pre></div></section></main></body></html>
