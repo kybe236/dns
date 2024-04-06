@@ -7,5 +7,6 @@ fn main() {
     dns.set_questions(vec![String::from("www.google.com")]);
     dns.question[0].qtype = 1;
     dns.question[0].qclass = 1;
-    
+    let res = dns.send().unwrap();
+    println!("{:#?}", res);
 }

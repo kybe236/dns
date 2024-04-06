@@ -2,17 +2,14 @@
 //!
 //! # Goals
 //! Make an dns client that supports all dns options.
-//! 
-//! 
+//!
+//!
 
 mod dns_error;
 
 use dns_error::DnsError;
 
-use std::{
-    error::Error,
-    process::{self},
-};
+use std::{error::Error, fmt::format, net::{IpAddr, Ipv4Addr, SocketAddr, ToSocketAddrs, UdpSocket}};
 
 /// All communications inside of the domain protocol are carried in a single
 /// format called a message.  The top level format of message is divided
@@ -95,142 +92,71 @@ impl Message {
             res.append(&mut new_parts);
         }
         res.push(0);
-        for _ in res.iter() {
-            self.header.qdcount += 1;
-            self.question.push(Question {
-                qname: res.clone(),
-                qtype: 0,
-                qclass: 0,
-            });
-        }
+        self.header.qdcount += 1;
+        self.question.push(Question {
+            qname: res,
+            qtype: 0,
+            qclass: 0,
+        });
     }
 
     pub fn from(vec: Vec<u8>) -> Message {
         let mut header = Header::new();
         header.id = u16::from_be_bytes([vec[0], vec[1]]);
+        println!("id: {:?}", header.id);
         header.flags = u16::from_be_bytes([vec[2], vec[3]]);
+        println!("flags: {:?}", header.flags);
         header.qdcount = u16::from_be_bytes([vec[4], vec[5]]);
+        println!("qdcount: {:?}", header.qdcount);
         header.ancount = u16::from_be_bytes([vec[6], vec[7]]);
+        println!("ancount: {:?}", header.ancount);
         header.nscount = u16::from_be_bytes([vec[8], vec[9]]);
+        println!("nscount: {:?}", header.nscount);
         header.arcount = u16::from_be_bytes([vec[10], vec[11]]);
+        println!("arc{:?}", header.arcount);
+
 
         let mut question = vec![];
         let mut i = 12;
         for _ in 0..header.qdcount {
-            let mut qname = vec![];
-            while vec[i] != 0 {
-                qname.push(vec[i]);
-                i += 1;
-            }
-            qname.push(0);
-            i += 1;
-            let qtype = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let qclass = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            question.push(Question {
-                qname,
-                qtype,
-                qclass,
-            });
-        }
-
-        let mut answer = vec![];
-
-        for _ in 0..header.ancount {
             let mut name = vec![];
             while vec[i] != 0 {
                 name.push(vec[i]);
                 i += 1;
             }
             name.push(0);
+            println!("Name: {:#?}", name);
             i += 1;
-            let rtype = u16::from_be_bytes([vec[i], vec[i + 1]]);
+            let qtype = u16::from_be_bytes([vec[i], vec[i + 1]]);
+            println!("{:?}", qtype);
             i += 2;
-            let rclass = u16::from_be_bytes([vec[i], vec[i + 1]]);
+            let qclass = u16::from_be_bytes([vec[i], vec[i + 1]]);
+            println!("{:?}", qclass);
             i += 2;
-            let ttl = u32::from_be_bytes([vec[i], vec[i + 1], vec[i + 2], vec[i + 3]]);
-            i += 4;
-            let rdlength = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let mut rdata = vec![];
-            for _ in 0..rdlength {
-                rdata.push(vec[i]);
-                i += 1;
-            }
-            answer.push(Resource {
-                name,
-                rtype,
-                rclass,
-                ttl,
-                rdlength,
-                rdata,
-            });
+            question.push(Question { qname: name, qtype, qclass });
+        }
+
+        let mut answer = vec![];
+        for _ in 0..header.ancount {
+            let (new_i, res) = Message::get_resource(vec.clone(), &mut i);
+            i = new_i;
+            answer.push(res);
         }
 
         let mut authority = vec![];
         for _ in 0..header.nscount {
-            let mut name = vec![];
-            while vec[i] != 0 {
-                name.push(vec[i]);
-                i += 1;
-            }
-            name.push(0);
-            i += 1;
-            let rtype = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let rclass = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let ttl = u32::from_be_bytes([vec[i], vec[i + 1], vec[i + 2], vec[i + 3]]);
-            i += 4;
-            let rdlength = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let mut rdata = vec![];
-            for _ in 0..rdlength {
-                rdata.push(vec[i]);
-                i += 1;
-            }
-            authority.push(Resource {
-                name,
-                rtype,
-                rclass,
-                ttl,
-                rdlength,
-                rdata,
-            });
+            let (new_i, res) = Message::get_resource(vec.clone(), &mut i);
+            i = new_i;
+            authority.push(res);
         }
 
         let mut additional = vec![];
         for _ in 0..header.arcount {
-            let mut name = vec![];
-            while vec[i] != 0 {
-                name.push(vec[i]);
-                i += 1;
-            }
-            name.push(0);
-            i += 1;
-            let rtype = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let rclass = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let ttl = u32::from_be_bytes([vec[i], vec[i + 1], vec[i + 2], vec[i + 3]]);
-            i += 4;
-            let rdlength = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            i += 2;
-            let mut rdata = vec![];
-            for _ in 0..rdlength {
-                rdata.push(vec[i]);
-                i += 1;
-            }
-            additional.push(Resource {
-                name,
-                rtype,
-                rclass,
-                ttl,
-                rdlength,
-                rdata,
-            });
+            let (new_i, res) = Message::get_resource(vec.clone(), &mut i);
+            i = new_i;
+            additional.push(res);
         }
+
 
         Message {
             header,
@@ -249,27 +175,85 @@ impl Message {
         res.extend_from_slice(&self.header.ancount.to_be_bytes());
         res.extend_from_slice(&self.header.nscount.to_be_bytes());
         res.extend_from_slice(&self.header.arcount.to_be_bytes());
-        for question in &self.question {
-            res.extend_from_slice(&question.qname);
-            res.extend_from_slice(&question.qtype.to_be_bytes());
-            res.extend_from_slice(&question.qclass.to_be_bytes());
+        for i in 0..self.header.qdcount {
+            res.append(&mut self.question[i as usize].qname.clone());
+            res.extend_from_slice(&self.question[i as usize].qtype.to_be_bytes());
+            res.extend_from_slice(&self.question[i as usize].qclass.to_be_bytes());
         }
         res
     }
 
     pub fn send(&self) -> Result<Message, Box<dyn Error>> {
-        let socket = std::net::UdpSocket::bind("127.0.0.1:12321")?;
+        let dns_server: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(1, 1, 1, 1)), 53);
+
 
         let data = self.get_packet();
 
-        socket.send_to(&data, "1.1.1.1")?;
+        let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind socket");
+        socket
+            .send_to(&data, dns_server)?;
 
         let mut buf = [0; 8192];
-        let (amt, _) = socket.recv_from(&mut buf)?;
+        let (amt, _) = socket
+            .recv_from(&mut buf)?;
 
-        let res = Message::from(buf[..amt].to_vec());
+        let res = Message::from(buf[..amt+5].to_vec());
 
         Ok(res)
+    }
+
+    fn get_resource(vec: Vec<u8>, i: &mut usize) -> (usize, Resource ){
+        let mut name = vec![];
+        let compressed = vec[*i] & 0b1100_0000;
+        if compressed == 0b1100_0000 {
+            let mut offset = u16::from_be_bytes([vec[*i], vec[*i + 1]]) & 0b0011_1111;
+            *i += 2;
+            while vec[offset as usize] != 0 {
+                name.push(vec[offset as usize]);
+                offset += 1;
+            }
+            println!("pointer: {:#?}", name)
+        }else {
+            while vec[*i] != 0 {
+                name.push(vec[*i]);
+                *i += 1;
+            }
+            *i += 1;
+            println!("{:#?}", name)
+        }
+        name.push(0);
+        let rtype = u16::from_be_bytes([vec[*i], vec[*i + 1]]);
+        println!("rtype: {:?}", rtype);
+        *i += 2;
+        let rclass = u16::from_be_bytes([vec[*i], vec[*i + 1]]);
+        println!("rclass: {:?}", rclass);
+        *i += 2;
+        let ttl = u32::from_be_bytes([vec[*i], vec[*i + 1], vec[*i + 2], vec[*i + 3]]);
+        println!("ttl: {:?}", ttl);
+        *i += 4;
+        let rdlength = u16::from_be_bytes([vec[*i], vec[*i + 1]]);
+        println!("rdlenght: {:?}", rdlength);
+        *i += 2;
+        let mut rdata = vec![];
+        for _ in 0..rdlength {
+            rdata.push(vec[*i]);
+            *i += 1;
+        }
+        println!("{:?}", rdata);
+        (   *i,
+            Resource {
+            name,
+            rtype,
+            rclass,
+            ttl,
+            rdlength,
+            rdata,
+        })
+    }
+}
+impl Default for Message {
+    fn default() -> Self {
+        Message::new()
     }
 }
 
@@ -439,13 +423,13 @@ impl Header {
     /// options.set_flags(0b0000_0000_0000_0000);
     /// ```
     pub fn set_flags(&mut self, flags: u16) -> Result<(), Box<dyn Error>> {
-        let mut test = flags & 0b0_1111_000_0000_0000;
-        test = test >> 11;
+        let mut test = flags & 0b0111_1000_0000_0000;
+        test >>= 11;
         if test > 2 {
             return Err(Box::new(DnsError::InvalidOpcodeFlag(test as i32)));
         }
         test = flags & 0b0000_0000_0111_0000;
-        test = test >> 4;
+        test >>= 4;
         if test != 0 {
             return Err(Box::new(DnsError::InvalidZFlag(test as i32)));
         }
@@ -472,15 +456,15 @@ pub struct Question {
     /// zero length octet for the null label of the root.  Note
     /// that this field may be an odd number of octets; no
     /// padding is used.
-    qname: Vec<u8>,
+    pub qname: Vec<u8>,
     ///  a two octet code which specifies the type of the query.
     ///  The values for this field include all codes valid for a
     ///  TYPE field, together with some more general codes which
     ///  can match more than one type of RR.
-    pub qtype: u16,     // ! TODO add seter with checks
+    pub qtype: u16, // ! TODO add seter with checks
     /// a two octet code that specifies the class of the query.
     /// For example, the QCLASS field is IN for the Internet.
-    pub qclass: u16,    // ! TODO add seter with checks
+    pub qclass: u16, // ! TODO add seter with checks
 }
 impl Question {
     /// # Creates a new Question
@@ -498,6 +482,11 @@ impl Question {
             qtype: 0,
             qclass: 0,
         }
+    }
+}
+impl Default for Question {
+    fn default() -> Self {
+        Question::new()
     }
 }
 
@@ -565,6 +554,4 @@ mod tests {
         let mut options = Header::new();
         options.set_flags(0b0000_0000_0000_1111).unwrap();
     }
-
-    
 }

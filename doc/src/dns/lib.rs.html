@@ -559,34 +559,18 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
 <a href="#555" id="555">555</a>
 <a href="#556" id="556">556</a>
 <a href="#557" id="557">557</a>
-<a href="#558" id="558">558</a>
-<a href="#559" id="559">559</a>
-<a href="#560" id="560">560</a>
-<a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a>
-<a href="#564" id="564">564</a>
-<a href="#565" id="565">565</a>
-<a href="#566" id="566">566</a>
-<a href="#567" id="567">567</a>
-<a href="#568" id="568">568</a>
-<a href="#569" id="569">569</a>
-<a href="#570" id="570">570</a>
 </pre></div><pre class="rust"><code><span class="doccomment">//! DNS Client in Development
 //!
 //! # Goals
 //! Make an dns client that supports all dns options.
-//! 
-//! 
+//!
+//!
 
 </span><span class="kw">mod </span>dns_error;
 
 <span class="kw">use </span>dns_error::DnsError;
 
-<span class="kw">use </span>std::{
-    error::Error,
-    process::{<span class="self">self</span>},
-};
+<span class="kw">use </span>std::{error::Error, fmt::format, net::{IpAddr, Ipv4Addr, SocketAddr, ToSocketAddrs, UdpSocket}};
 
 <span class="doccomment">/// All communications inside of the domain protocol are carried in a single
 /// format called a message.  The top level format of message is divided
@@ -669,142 +653,71 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
             res.append(<span class="kw-2">&amp;mut </span>new_parts);
         }
         res.push(<span class="number">0</span>);
-        <span class="kw">for _ in </span>res.iter() {
-            <span class="self">self</span>.header.qdcount += <span class="number">1</span>;
-            <span class="self">self</span>.question.push(Question {
-                qname: res.clone(),
-                qtype: <span class="number">0</span>,
-                qclass: <span class="number">0</span>,
-            });
-        }
+        <span class="self">self</span>.header.qdcount += <span class="number">1</span>;
+        <span class="self">self</span>.question.push(Question {
+            qname: res,
+            qtype: <span class="number">0</span>,
+            qclass: <span class="number">0</span>,
+        });
     }
 
     <span class="kw">pub fn </span>from(vec: Vec&lt;u8&gt;) -&gt; Message {
         <span class="kw">let </span><span class="kw-2">mut </span>header = Header::new();
         header.id = u16::from_be_bytes([vec[<span class="number">0</span>], vec[<span class="number">1</span>]]);
+        <span class="macro">println!</span>(<span class="string">"id: {:?}"</span>, header.id);
         header.flags = u16::from_be_bytes([vec[<span class="number">2</span>], vec[<span class="number">3</span>]]);
+        <span class="macro">println!</span>(<span class="string">"flags: {:?}"</span>, header.flags);
         header.qdcount = u16::from_be_bytes([vec[<span class="number">4</span>], vec[<span class="number">5</span>]]);
+        <span class="macro">println!</span>(<span class="string">"qdcount: {:?}"</span>, header.qdcount);
         header.ancount = u16::from_be_bytes([vec[<span class="number">6</span>], vec[<span class="number">7</span>]]);
+        <span class="macro">println!</span>(<span class="string">"ancount: {:?}"</span>, header.ancount);
         header.nscount = u16::from_be_bytes([vec[<span class="number">8</span>], vec[<span class="number">9</span>]]);
+        <span class="macro">println!</span>(<span class="string">"nscount: {:?}"</span>, header.nscount);
         header.arcount = u16::from_be_bytes([vec[<span class="number">10</span>], vec[<span class="number">11</span>]]);
+        <span class="macro">println!</span>(<span class="string">"arc{:?}"</span>, header.arcount);
+
 
         <span class="kw">let </span><span class="kw-2">mut </span>question = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">12</span>;
         <span class="kw">for _ in </span><span class="number">0</span>..header.qdcount {
-            <span class="kw">let </span><span class="kw-2">mut </span>qname = <span class="macro">vec!</span>[];
-            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
-                qname.push(vec[i]);
-                i += <span class="number">1</span>;
-            }
-            qname.push(<span class="number">0</span>);
-            i += <span class="number">1</span>;
-            <span class="kw">let </span>qtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span>qclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            question.push(Question {
-                qname,
-                qtype,
-                qclass,
-            });
-        }
-
-        <span class="kw">let </span><span class="kw-2">mut </span>answer = <span class="macro">vec!</span>[];
-
-        <span class="kw">for _ in </span><span class="number">0</span>..header.ancount {
             <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
             <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
                 name.push(vec[i]);
                 i += <span class="number">1</span>;
             }
             name.push(<span class="number">0</span>);
+            <span class="macro">println!</span>(<span class="string">"Name: {:#?}"</span>, name);
             i += <span class="number">1</span>;
-            <span class="kw">let </span>rtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            <span class="kw">let </span>qtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            <span class="macro">println!</span>(<span class="string">"{:?}"</span>, qtype);
             i += <span class="number">2</span>;
-            <span class="kw">let </span>rclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            <span class="kw">let </span>qclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
+            <span class="macro">println!</span>(<span class="string">"{:?}"</span>, qclass);
             i += <span class="number">2</span>;
-            <span class="kw">let </span>ttl = u32::from_be_bytes([vec[i], vec[i + <span class="number">1</span>], vec[i + <span class="number">2</span>], vec[i + <span class="number">3</span>]]);
-            i += <span class="number">4</span>;
-            <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
-            <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
-                rdata.push(vec[i]);
-                i += <span class="number">1</span>;
-            }
-            answer.push(Resource {
-                name,
-                rtype,
-                rclass,
-                ttl,
-                rdlength,
-                rdata,
-            });
+            question.push(Question { qname: name, qtype, qclass });
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>answer = <span class="macro">vec!</span>[];
+        <span class="kw">for _ in </span><span class="number">0</span>..header.ancount {
+            <span class="kw">let </span>(new_i, res) = Message::get_resource(vec.clone(), <span class="kw-2">&amp;mut </span>i);
+            i = new_i;
+            answer.push(res);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>authority = <span class="macro">vec!</span>[];
         <span class="kw">for _ in </span><span class="number">0</span>..header.nscount {
-            <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
-            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
-                name.push(vec[i]);
-                i += <span class="number">1</span>;
-            }
-            name.push(<span class="number">0</span>);
-            i += <span class="number">1</span>;
-            <span class="kw">let </span>rtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span>rclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span>ttl = u32::from_be_bytes([vec[i], vec[i + <span class="number">1</span>], vec[i + <span class="number">2</span>], vec[i + <span class="number">3</span>]]);
-            i += <span class="number">4</span>;
-            <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
-            <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
-                rdata.push(vec[i]);
-                i += <span class="number">1</span>;
-            }
-            authority.push(Resource {
-                name,
-                rtype,
-                rclass,
-                ttl,
-                rdlength,
-                rdata,
-            });
+            <span class="kw">let </span>(new_i, res) = Message::get_resource(vec.clone(), <span class="kw-2">&amp;mut </span>i);
+            i = new_i;
+            authority.push(res);
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>additional = <span class="macro">vec!</span>[];
         <span class="kw">for _ in </span><span class="number">0</span>..header.arcount {
-            <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
-            <span class="kw">while </span>vec[i] != <span class="number">0 </span>{
-                name.push(vec[i]);
-                i += <span class="number">1</span>;
-            }
-            name.push(<span class="number">0</span>);
-            i += <span class="number">1</span>;
-            <span class="kw">let </span>rtype = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span>rclass = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span>ttl = u32::from_be_bytes([vec[i], vec[i + <span class="number">1</span>], vec[i + <span class="number">2</span>], vec[i + <span class="number">3</span>]]);
-            i += <span class="number">4</span>;
-            <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[i], vec[i + <span class="number">1</span>]]);
-            i += <span class="number">2</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
-            <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
-                rdata.push(vec[i]);
-                i += <span class="number">1</span>;
-            }
-            additional.push(Resource {
-                name,
-                rtype,
-                rclass,
-                ttl,
-                rdlength,
-                rdata,
-            });
+            <span class="kw">let </span>(new_i, res) = Message::get_resource(vec.clone(), <span class="kw-2">&amp;mut </span>i);
+            i = new_i;
+            additional.push(res);
         }
+
 
         Message {
             header,
@@ -823,27 +736,85 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
         res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.ancount.to_be_bytes());
         res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.nscount.to_be_bytes());
         res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.header.arcount.to_be_bytes());
-        <span class="kw">for </span>question <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.question {
-            res.extend_from_slice(<span class="kw-2">&amp;</span>question.qname);
-            res.extend_from_slice(<span class="kw-2">&amp;</span>question.qtype.to_be_bytes());
-            res.extend_from_slice(<span class="kw-2">&amp;</span>question.qclass.to_be_bytes());
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.header.qdcount {
+            res.append(<span class="kw-2">&amp;mut </span><span class="self">self</span>.question[i <span class="kw">as </span>usize].qname.clone());
+            res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.question[i <span class="kw">as </span>usize].qtype.to_be_bytes());
+            res.extend_from_slice(<span class="kw-2">&amp;</span><span class="self">self</span>.question[i <span class="kw">as </span>usize].qclass.to_be_bytes());
         }
         res
     }
 
     <span class="kw">pub fn </span>send(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Message, Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
-        <span class="kw">let </span>socket = std::net::UdpSocket::bind(<span class="string">"127.0.0.1:12321"</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>dns_server: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)), <span class="number">53</span>);
+
 
         <span class="kw">let </span>data = <span class="self">self</span>.get_packet();
 
-        socket.send_to(<span class="kw-2">&amp;</span>data, <span class="string">"1.1.1.1"</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>socket = UdpSocket::bind(<span class="string">"0.0.0.0:0"</span>).expect(<span class="string">"Failed to bind socket"</span>);
+        socket
+            .send_to(<span class="kw-2">&amp;</span>data, dns_server)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>buf = [<span class="number">0</span>; <span class="number">8192</span>];
-        <span class="kw">let </span>(amt, <span class="kw">_</span>) = socket.recv_from(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
+        <span class="kw">let </span>(amt, <span class="kw">_</span>) = socket
+            .recv_from(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>res = Message::from(buf[..amt].to_vec());
+        <span class="kw">let </span>res = Message::from(buf[..amt+<span class="number">5</span>].to_vec());
 
         <span class="prelude-val">Ok</span>(res)
+    }
+
+    <span class="kw">fn </span>get_resource(vec: Vec&lt;u8&gt;, i: <span class="kw-2">&amp;mut </span>usize) -&gt; (usize, Resource ){
+        <span class="kw">let </span><span class="kw-2">mut </span>name = <span class="macro">vec!</span>[];
+        <span class="kw">let </span>compressed = vec[<span class="kw-2">*</span>i] &amp; <span class="number">0b1100_0000</span>;
+        <span class="kw">if </span>compressed == <span class="number">0b1100_0000 </span>{
+            <span class="kw">let </span><span class="kw-2">mut </span>offset = u16::from_be_bytes([vec[<span class="kw-2">*</span>i], vec[<span class="kw-2">*</span>i + <span class="number">1</span>]]) &amp; <span class="number">0b0011_1111</span>;
+            <span class="kw-2">*</span>i += <span class="number">2</span>;
+            <span class="kw">while </span>vec[offset <span class="kw">as </span>usize] != <span class="number">0 </span>{
+                name.push(vec[offset <span class="kw">as </span>usize]);
+                offset += <span class="number">1</span>;
+            }
+            <span class="macro">println!</span>(<span class="string">"pointer: {:#?}"</span>, name)
+        }<span class="kw">else </span>{
+            <span class="kw">while </span>vec[<span class="kw-2">*</span>i] != <span class="number">0 </span>{
+                name.push(vec[<span class="kw-2">*</span>i]);
+                <span class="kw-2">*</span>i += <span class="number">1</span>;
+            }
+            <span class="kw-2">*</span>i += <span class="number">1</span>;
+            <span class="macro">println!</span>(<span class="string">"{:#?}"</span>, name)
+        }
+        name.push(<span class="number">0</span>);
+        <span class="kw">let </span>rtype = u16::from_be_bytes([vec[<span class="kw-2">*</span>i], vec[<span class="kw-2">*</span>i + <span class="number">1</span>]]);
+        <span class="macro">println!</span>(<span class="string">"rtype: {:?}"</span>, rtype);
+        <span class="kw-2">*</span>i += <span class="number">2</span>;
+        <span class="kw">let </span>rclass = u16::from_be_bytes([vec[<span class="kw-2">*</span>i], vec[<span class="kw-2">*</span>i + <span class="number">1</span>]]);
+        <span class="macro">println!</span>(<span class="string">"rclass: {:?}"</span>, rclass);
+        <span class="kw-2">*</span>i += <span class="number">2</span>;
+        <span class="kw">let </span>ttl = u32::from_be_bytes([vec[<span class="kw-2">*</span>i], vec[<span class="kw-2">*</span>i + <span class="number">1</span>], vec[<span class="kw-2">*</span>i + <span class="number">2</span>], vec[<span class="kw-2">*</span>i + <span class="number">3</span>]]);
+        <span class="macro">println!</span>(<span class="string">"ttl: {:?}"</span>, ttl);
+        <span class="kw-2">*</span>i += <span class="number">4</span>;
+        <span class="kw">let </span>rdlength = u16::from_be_bytes([vec[<span class="kw-2">*</span>i], vec[<span class="kw-2">*</span>i + <span class="number">1</span>]]);
+        <span class="macro">println!</span>(<span class="string">"rdlenght: {:?}"</span>, rdlength);
+        <span class="kw-2">*</span>i += <span class="number">2</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>rdata = <span class="macro">vec!</span>[];
+        <span class="kw">for _ in </span><span class="number">0</span>..rdlength {
+            rdata.push(vec[<span class="kw-2">*</span>i]);
+            <span class="kw-2">*</span>i += <span class="number">1</span>;
+        }
+        <span class="macro">println!</span>(<span class="string">"{:?}"</span>, rdata);
+        (   <span class="kw-2">*</span>i,
+            Resource {
+            name,
+            rtype,
+            rclass,
+            ttl,
+            rdlength,
+            rdata,
+        })
+    }
+}
+<span class="kw">impl </span>Default <span class="kw">for </span>Message {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Message::new()
     }
 }
 
@@ -1013,13 +984,13 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     /// options.set_flags(0b0000_0000_0000_0000);
     /// ```
     </span><span class="kw">pub fn </span>set_flags(<span class="kw-2">&amp;mut </span><span class="self">self</span>, flags: u16) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>test = flags &amp; <span class="number">0b0_1111_000_0000_0000</span>;
-        test = test &gt;&gt; <span class="number">11</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>test = flags &amp; <span class="number">0b0111_1000_0000_0000</span>;
+        test &gt;&gt;= <span class="number">11</span>;
         <span class="kw">if </span>test &gt; <span class="number">2 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(Box::new(DnsError::InvalidOpcodeFlag(test <span class="kw">as </span>i32)));
         }
         test = flags &amp; <span class="number">0b0000_0000_0111_0000</span>;
-        test = test &gt;&gt; <span class="number">4</span>;
+        test &gt;&gt;= <span class="number">4</span>;
         <span class="kw">if </span>test != <span class="number">0 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(Box::new(DnsError::InvalidZFlag(test <span class="kw">as </span>i32)));
         }
@@ -1046,15 +1017,15 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     /// zero length octet for the null label of the root.  Note
     /// that this field may be an odd number of octets; no
     /// padding is used.
-    </span>qname: Vec&lt;u8&gt;,
+    </span><span class="kw">pub </span>qname: Vec&lt;u8&gt;,
     <span class="doccomment">///  a two octet code which specifies the type of the query.
     ///  The values for this field include all codes valid for a
     ///  TYPE field, together with some more general codes which
     ///  can match more than one type of RR.
-    </span><span class="kw">pub </span>qtype: u16,     <span class="comment">// ! TODO add seter with checks
+    </span><span class="kw">pub </span>qtype: u16, <span class="comment">// ! TODO add seter with checks
     </span><span class="doccomment">/// a two octet code that specifies the class of the query.
     /// For example, the QCLASS field is IN for the Internet.
-    </span><span class="kw">pub </span>qclass: u16,    <span class="comment">// ! TODO add seter with checks
+    </span><span class="kw">pub </span>qclass: u16, <span class="comment">// ! TODO add seter with checks
 </span>}
 <span class="kw">impl </span>Question {
     <span class="doccomment">/// # Creates a new Question
@@ -1072,6 +1043,11 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
             qtype: <span class="number">0</span>,
             qclass: <span class="number">0</span>,
         }
+    }
+}
+<span class="kw">impl </span>Default <span class="kw">for </span>Question {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Question::new()
     }
 }
 
@@ -1139,7 +1115,5 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
         <span class="kw">let </span><span class="kw-2">mut </span>options = Header::new();
         options.set_flags(<span class="number">0b0000_0000_0000_1111</span>).unwrap();
     }
-
-    
 }
 </code></pre></div></section></main></body></html>
