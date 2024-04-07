@@ -3,13 +3,12 @@
 //! # Goals
 //! Make an dns client that supports all dns options.
 //!
-//!
 
 mod dns_error;
 
 use dns_error::DnsError;
 
-use std::{error::Error, fmt::format, net::{IpAddr, Ipv4Addr, SocketAddr, ToSocketAddrs, UdpSocket}};
+use std::{error::Error, net::{IpAddr, Ipv4Addr, SocketAddr, UdpSocket}};
 
 /// All communications inside of the domain protocol are carried in a single
 /// format called a message.  The top level format of message is divided
@@ -27,12 +26,12 @@ pub struct Message {
     /// query class (QCLASS), and a query domain name (QNAME).
     pub question: Vec<Question>,
     /// The answer section contains RRs that answer the question.
-    answer: Option<Vec<Resource>>,
+    answer: Vec<Resource>,
     /// the authority section contains RRs that point toward an authoritative name server.
-    authority: Option<Vec<Resource>>,
+    authority: Vec<Resource>,
     /// the additional records section contains RRs
     /// which relate to the query, but are not strictly answers for the question.
-    additional: Option<Vec<Resource>>,
+    additional: Vec<Resource>,
 }
 impl Message {
     /// # Creates a new DnsOption
@@ -48,9 +47,9 @@ impl Message {
         Message {
             header: Header::new(),
             question: vec![],
-            answer: None,
-            authority: None,
-            additional: None,
+            answer: vec![],
+            authority: vec![],
+            additional: vec![],
         }
     }
 
@@ -100,38 +99,32 @@ impl Message {
         });
     }
 
+    /// # creates a message from a vector of bytes
+    /// # Arguments
+    /// takes a vector of bytes as an argument.
     pub fn from(vec: Vec<u8>) -> Message {
         let mut header = Header::new();
         header.id = u16::from_be_bytes([vec[0], vec[1]]);
-        println!("id: {:?}", header.id);
         header.flags = u16::from_be_bytes([vec[2], vec[3]]);
-        println!("flags: {:?}", header.flags);
         header.qdcount = u16::from_be_bytes([vec[4], vec[5]]);
-        println!("qdcount: {:?}", header.qdcount);
         header.ancount = u16::from_be_bytes([vec[6], vec[7]]);
-        println!("ancount: {:?}", header.ancount);
         header.nscount = u16::from_be_bytes([vec[8], vec[9]]);
-        println!("nscount: {:?}", header.nscount);
         header.arcount = u16::from_be_bytes([vec[10], vec[11]]);
-        println!("arc{:?}", header.arcount);
-
 
         let mut question = vec![];
         let mut i = 12;
         for _ in 0..header.qdcount {
             let mut name = vec![];
+
             while vec[i] != 0 {
                 name.push(vec[i]);
                 i += 1;
             }
             name.push(0);
-            println!("Name: {:#?}", name);
             i += 1;
             let qtype = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            println!("{:?}", qtype);
             i += 2;
             let qclass = u16::from_be_bytes([vec[i], vec[i + 1]]);
-            println!("{:?}", qclass);
             i += 2;
             question.push(Question { qname: name, qtype, qclass });
         }
@@ -161,9 +154,9 @@ impl Message {
         Message {
             header,
             question,
-            answer: Some(answer),
-            authority: Some(authority),
-            additional: Some(additional),
+            answer: answer,
+            authority: authority,
+            additional: additional,
         }
     }
 
@@ -183,6 +176,19 @@ impl Message {
         res
     }
 
+    /// # Sends the message
+    /// # Returns
+    /// returns a Result with a Message or a Box\<dyn Error\>
+    /// # Example
+    /// ```
+    /// use dns::Message;
+    /// 
+    /// let mut message = Message::new();
+    /// 
+    /// message.set_questions(vec!["www.google.com".to_string()]);
+    /// 
+    /// let res = message.send();
+    /// ```
     pub fn send(&self) -> Result<Message, Box<dyn Error>> {
         let dns_server: SocketAddr = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(1, 1, 1, 1)), 53);
 
@@ -202,6 +208,11 @@ impl Message {
         Ok(res)
     }
 
+    /// # Creates a new Resource
+    /// # Arguments
+    /// takes a vector of bytes and a mutable reference to a usize.
+    /// # Returns
+    /// returns a tuple with the usize and a Resource.
     fn get_resource(vec: Vec<u8>, i: &mut usize) -> (usize, Resource ){
         let mut name = vec![];
         let compressed = vec[*i] & 0b1100_0000;
@@ -212,34 +223,27 @@ impl Message {
                 name.push(vec[offset as usize]);
                 offset += 1;
             }
-            println!("pointer: {:#?}", name)
         }else {
             while vec[*i] != 0 {
                 name.push(vec[*i]);
                 *i += 1;
             }
             *i += 1;
-            println!("{:#?}", name)
         }
         name.push(0);
         let rtype = u16::from_be_bytes([vec[*i], vec[*i + 1]]);
-        println!("rtype: {:?}", rtype);
         *i += 2;
         let rclass = u16::from_be_bytes([vec[*i], vec[*i + 1]]);
-        println!("rclass: {:?}", rclass);
         *i += 2;
         let ttl = u32::from_be_bytes([vec[*i], vec[*i + 1], vec[*i + 2], vec[*i + 3]]);
-        println!("ttl: {:?}", ttl);
         *i += 4;
         let rdlength = u16::from_be_bytes([vec[*i], vec[*i + 1]]);
-        println!("rdlenght: {:?}", rdlength);
         *i += 2;
         let mut rdata = vec![];
         for _ in 0..rdlength {
             rdata.push(vec[*i]);
             *i += 1;
         }
-        println!("{:?}", rdata);
         (   *i,
             Resource {
             name,
@@ -296,18 +300,15 @@ impl Header {
     ///
     /// This method creates a new DnsOption with the following default values:
     ///
-    /// - id: 0
+    /// - id: Random u16
     /// - flags: 0
     /// - question: Vec::new()
     /// - qdcount: 0
     /// - ancount: 0
     /// - nscount: 0
-    /// - arcount: 0
-    /// - qtype: 0
-    /// - qclass: 0
     pub fn new() -> Header {
         Header {
-            id: 0,
+            id: rand::random::<u16>(),
             flags: 0,
             qdcount: 0,
             ancount: 0,
@@ -461,13 +462,14 @@ pub struct Question {
     ///  The values for this field include all codes valid for a
     ///  TYPE field, together with some more general codes which
     ///  can match more than one type of RR.
-    pub qtype: u16, // ! TODO add seter with checks
+    qtype: u16, // ! TODO add seter with checks
     /// a two octet code that specifies the class of the query.
     /// For example, the QCLASS field is IN for the Internet.
-    pub qclass: u16, // ! TODO add seter with checks
+    qclass: u16, // ! TODO add seter with checks
 }
 impl Question {
     /// # Creates a new Question
+    /// 
     ///
     /// # Example
     ///
@@ -476,12 +478,51 @@ impl Question {
     ///
     /// let question = Question::new();
     /// ```
+    /// 
+    /// # Note
+    /// 
+    /// This method creates a new Question with the following default values:
+    /// 
+    /// - qname: Vec::new()     // Empty
+    /// - qtype: 1              // A
+    /// - qclass: 1             // IN
     pub fn new() -> Question {
         Question {
             qname: Vec::new(),
-            qtype: 0,
-            qclass: 0,
+            qtype: 1,
+            qclass: 1,
         }
+    }
+
+    pub fn set_qtype(&mut self, qtype: u16) -> Result<(), Box<dyn Error>>{
+        match qtype {
+            // valid qtypes
+            // https://en.wikipedia.org/wiki/List_of_DNS_record_types
+            1 | 2 | 5 | 6 | 12 | 13 | 15 | 16 | 17 | 18 | 24| 25 | 28 | 29 | 33 | 35 | 36 | 37 | 39 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 55 | 59 | 60 | 61 | 62 | 63 | 64 | 65 | 108 | 109 | 249 | 250 | 251 | 252 | 255 | 256 | 257 | 32768 | 32769 => {
+                self.qtype = qtype;
+                Ok(())
+            }
+            _ => return Err(Box::new(DnsError::InvalidQType(qtype))),
+        }
+    }
+
+    pub fn set_qclass(&mut self, qclass: u16) -> Result<(), Box<dyn Error>> {
+        match qclass {
+            // 0	        0x0000	        Reserved	                [RFC6895]
+            // 1	        0x0001	        Internet (IN)	            [RFC1035]
+            // 2	        0x0002	        Unassigned	
+            // 3	        0x0003	        Chaos (CH)	                [D. Moon, "Chaosnet", A.I. Memo 628, Massachusetts Institute of Technology Artificial Intelligence Laboratory, June 1981.]
+            // 4	        0x0004	        Hesiod (HS)	                [Dyer, S., and F. Hsu, "Hesiod", Project Athena Technical Plan - Name Service, April 1987.]
+            // 5-253	    0x0005-0x00FD	Unassigned	
+            // 254	        0x00FE	        QCLASS NONE	                [RFC2136]
+            // 255	        0x00FF	        QCLASS * (ANY)	            [RFC1035]
+            // 256-65279	0x0100-0xFEFF	Unassigned	
+            // 65280-65534	0xFF00-0xFFFE	Reserved for Private Use	[RFC6895]
+            // 65535	    0xFFFF	        Reserved	                [RFC6895]
+            0 | 5..=253 | 256..=65279 | 65535 => return Err(Box::new(DnsError::InvalidQClass(qclass))),
+            _ => self.qclass = qclass,
+        }
+        Ok(())
     }
 }
 impl Default for Question {

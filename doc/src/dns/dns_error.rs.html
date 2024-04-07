@@ -22,6 +22,10 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
 <a href="#18" id="18">18</a>
 <a href="#19" id="19">19</a>
 <a href="#20" id="20">20</a>
+<a href="#21" id="21">21</a>
+<a href="#22" id="22">22</a>
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::{error::Error, fmt};
 
 <span class="attr">#[derive(Debug)]
@@ -29,6 +33,8 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
     InvalidZFlag(i32),
     InvalidOpcodeFlag(i32),
     InvalidRcodeFlag(i32),
+    InvalidQType(u16),
+    InvalidQClass(u16),
 }
 
 <span class="kw">impl </span>Error <span class="kw">for </span>DnsError {}
@@ -39,6 +45,8 @@ data-use_system_theme="false"></script><meta name="rustdoc-vars" data-root-path=
             DnsError::InvalidZFlag(v) =&gt; <span class="macro">write!</span>(f, <span class="string">"Invalid Z flag {v} (should be 0)"</span>),
             DnsError::InvalidOpcodeFlag(v) =&gt; <span class="macro">write!</span>(f, <span class="string">"Invalid opcode flag {v} (should be 0-2)"</span>),
             DnsError::InvalidRcodeFlag(v) =&gt; <span class="macro">write!</span>(f, <span class="string">"Invalid rcode flag {v} (should be 0-5)"</span>),
+            DnsError::InvalidQType(v) =&gt; <span class="macro">write!</span>(f, <span class="string">"Invalid qtype {v} (should be in https://en.wikipedia.org/wiki/List_of_DNS_record_types) (contact me if im wrong!)"</span>),
+            DnsError::InvalidQClass(v) =&gt; <span class="macro">write!</span>(f, <span class="string">"Invalid qclass {v} (should be in rfc6895) (contact me if im wrong!)"</span>),
         }
     }
 }
