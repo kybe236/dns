@@ -77,10 +77,13 @@ impl Message {
     /// zero length octet for the null label of the root.  Note
     /// that this field may be an odd number of octets; no
     /// padding is used.
-    pub fn set_questions(&mut self, questions: Vec<String>) {
+    pub fn set_questions(&mut self, questions: Vec<String>) -> Result<(), Box<dyn Error>>{
         let mut res = vec![];
         for label in questions {
-            let parts = label.split('.');
+            let mut parts: Vec<&str> = label.split('.').collect();
+            for i in &mut parts {
+                *i = i.trim();
+            }
             let mut new_parts = vec![];
             for part in parts {
                 new_parts.push(part.len() as u8);
@@ -97,6 +100,7 @@ impl Message {
             qtype: 0,
             qclass: 0,
         });
+        Ok(())
     }
 
     /// # creates a message from a vector of bytes
@@ -154,9 +158,9 @@ impl Message {
         Message {
             header,
             question,
-            answer: answer,
-            authority: authority,
-            additional: additional,
+            answer,
+            authority,
+            additional,
         }
     }
 
@@ -462,10 +466,10 @@ pub struct Question {
     ///  The values for this field include all codes valid for a
     ///  TYPE field, together with some more general codes which
     ///  can match more than one type of RR.
-    qtype: u16, // ! TODO add seter with checks
+    qtype: u16,
     /// a two octet code that specifies the class of the query.
     /// For example, the QCLASS field is IN for the Internet.
-    qclass: u16, // ! TODO add seter with checks
+    qclass: u16,
 }
 impl Question {
     /// # Creates a new Question
@@ -502,7 +506,7 @@ impl Question {
                 self.qtype = qtype;
                 Ok(())
             }
-            _ => return Err(Box::new(DnsError::InvalidQType(qtype))),
+            _ => Err(Box::new(DnsError::InvalidQType(qtype))),
         }
     }
 
