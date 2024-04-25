@@ -199,7 +199,10 @@ impl Message {
 
         let data = self.get_packet();
 
-        let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind socket");
+        let socket = match UdpSocket::bind("0.0.0.0:0") {
+            Ok(val) => val,
+            Err(e) => dns_error::DnsError::UdpSocketError(e),
+        }
         socket
             .send_to(&data, dns_server)?;
 
